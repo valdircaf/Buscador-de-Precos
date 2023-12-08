@@ -1,0 +1,98 @@
+.content .divs{
+    margin: 2em 0;
+}
+
+.content{
+    /* background: linear-gradient(180deg, #F5F5F5 49.96%, #F9E2E2 100%); */
+    width: 100%;
+    height: 100%;
+    padding: 2em;
+    text-align: center;
+    font-weight: 400;
+    display: none;
+}
+
+.content .divs{
+    box-shadow: 0px 0px 5px 2px #00000060;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    border-radius: 5px;
+    padding: 1em;
+}
+
+.content h2{
+    color: #E42A2D;
+    font-weight: 500;
+}
+
+.content .divs input, h2{
+    display: none;
+}
+
+.main-content{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-image: url("./assets/images/bg-page1.png");
+    color: #FFF;
+    padding: 2em;
+    gap: 5em;
+    align-items: center;
+}
+
+.main-content .top{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+}
+
+.main-content .bottom{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+    box-shadow: 0px 0px 10px 1px rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, .9);
+    padding: 1em;
+}
+
+.main-content h1{
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.main-content .bar{
+    width: 5em;
+    height: 2px;
+    background-color: #E42A2D;
+}
+
+.main-content #getHTML{
+    background-color: #E42A2D;
+    outline: none;
+    border: none;
+    height: 3em;
+    width: 12em;
+    border-radius: 3px;
+    color: #FFF;
+    cursor: pointer;
+}
+
+.middle img{
+    width: 10em;
+}
+
+body{
+    width: 33.25em;
+    height: 45em;
+    font-family: 'Open Sans', sans-serif;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    border: none;
+}
