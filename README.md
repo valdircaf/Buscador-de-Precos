@@ -1,4 +1,4 @@
-# 💸 Finances
+# 🔎 Buscador de Preços Rede Frota
 
 <img src="./assets/images/appImage.png"/>
 
