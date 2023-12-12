@@ -5,7 +5,7 @@
   <link rel="stylesheet" href="main.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
     <section class="main-content">
@@ -18,12 +18,21 @@
         <img src="./assets/images/Logo Letra Branca.svg" alt="Logo Amigo do Bolso">
       </div>
       <div class="bottom">
-        <p>Rota traçada? Clique em buscar para obter os postos mais baratos desta rota!</p>
+        <p>Rota tracada? Clique em buscar para obter os postos mais baratos desta rota!</p>
         <button id="getHTML">Buscar</button>
       </div>
     </section>
+    <div id="loading-page">
+      <img src="./assets/images/VAyR.gif" alt="GIF Carregamento">
+      <p>Analisando postos mais baratos da rota...</p>
+    </div>
     <div class="content">
-      <h2>Postos mais baratos encontrados na rota!</h2>
+      <picture class="pic">
+        <img src="./assets/images/Logo Letra Branca.svg" alt="">
+      </picture>
+      <div class="content-postos">
+        <h3>Abaixo estao os postos mais baratos que encontrei...</h3>
+      </div>
     </div>
     <script src="popup.js"></script>
     <script src="background.js"></script>

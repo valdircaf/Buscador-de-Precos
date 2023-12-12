@@ -1,3 +1,7 @@
+const main_content = document.querySelector(".main-content");
+const content = document.querySelector(".content");
+const loading_page = document.querySelector("#loading-page");
+
 document.getElementById('getHTML').addEventListener('click', () => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const currentTabId = tabs[0].id;
@@ -6,68 +10,111 @@ document.getElementById('getHTML').addEventListener('click', () => {
       function: getTableValues,
     });
   });
-  document.querySelector(".content").style.display = "block";
-  document.querySelector(".main-content").style.display = "none";
-  document.querySelector(".h1").style.display = "block";
+  
+  loading_page.style.display = "flex";
+  main_content.style.display = "none";
 });
 
-function getTableValues() {
-  const tableElement = document.querySelector('#tabelaPostos'); // Substitua 'your-class-name' pelo nome da sua classe
-  if (tableElement) {
-  const rows = tableElement.querySelectorAll('tr');
-  let currentDistance = 0;
-  let variantDistance = 0;
-  let initialDistance = 0;
-  let currentCombValue = 10630;
-  let contComb = 10620;
-  let values = [];
-  rows.forEach((row) => {
-    const cells = row.querySelectorAll('td');
-    const rowValues = Array.from(cells).map((cell) => {
-      let last_td = row.querySelector("td:last-child");
-      let distance = last_td.innerHTML.split("<br>");
-      let number = distance[0].replace(/\D/g, ',').replace(/,+/g, ',').replace(/^,|,$/g, '').replace(/,/g, '.');
-      let currentNumber = parseFloat(number);
-      if (currentNumber - currentDistance >= 500 && currentNumber - currentDistance <= 850) {
-        const current_td = row.querySelector(".combustivel");
-        if(current_td.innerText === "Nenhum preço encontrado."){
-          return;
-        }
-        else if(parseFloat(current_td.innerText.replace(/\D/g, '')) < currentCombValue){
-          currentDistance = currentNumber;
-          values.push(row.innerHTML);
-        }
-      }
-      if(currentNumber - variantDistance >= 400 && currentNumber - variantDistance <= 500){
-        const current_td = row.querySelector(".combustivel");
-        if(current_td.innerText === "Nenhum preço encontrado."){
-          return;
-        }else if(parseFloat(current_td.innerText.replace(/\D/g, '')) < currentCombValue){
-          variantDistance = currentNumber;  
-          values.push(row.innerHTML);
-        }
-      }
-      if(currentNumber - initialDistance <= 100){
-        const current_td = row.querySelector(".combustivel");
-        if(current_td.innerText === "Nenhum preço encontrado."){
-          return;
-        }else if(parseFloat(current_td.innerText.replace(/\D/g, '')) < currentCombValue && parseFloat(current_td.innerText.replace(/\D/g, '')) > 10540){
-          initialDistance = currentNumber;
-          let postos = [];
-          postos.push(row); 
-          postos.map((posto) => {
-            if(posto.querySelector(".combustivel").innerText.replace(/\D/g, '') < contComb){
-              contComb = posto.querySelector(".combustivel").innerText.replace(/\D/g, '');
-              values.push(row.innerHTML);
-            }
-          })
-        }
-      }
-    });
-  });
-  chrome.runtime.sendMessage({ values });
+async function getTableValues() {
 
-  } else {
-    console.error('Table not found');
+  //SETA O SELECT COMO DIESEL S-10
+  const div_navbar = document.querySelector(".rotas #filtroCombustiveis")
+  const div_options = div_navbar.querySelector("div");
+  const select = div_options.querySelector(".btn-group");
+  const arraySelect = Array.from(select).map(option => {
+    if(option.value === "28"){
+      document.querySelector(".multiselect").setAttribute("title", option.innerText);
+      document.querySelector(".multiselect-selected-text").innerText = option.innerText;
+    }
+  }) 
+
+  //SETA A CLASSE DA LISTA DIESEL S-10 COMO ATIVA
+  const options = document.querySelector(".multiselect-container");
+  const lists_on_options = options.querySelectorAll("li");
+  const map_lists = Array.from(lists_on_options).map(li => {
+    // li.querySelector(".checkbox").textContent
+    if(li.querySelector("input[value = '28']")){
+      li.classList.add("active");
+    }
+  })
+  
+  //ABRE A TABELA DE POSTOS
+  document.querySelector("#btnSelecionarPostorRota").click();
+  const tabelaPostos = document.getElementById("tabelaPostos");
+
+  //PEGA TODAS AS TR DENTRO DA TBODY
+  const getTr = async ()=>{
+    const tBody = tabelaPostos.querySelector("tbody");
+    const observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+              if(mutation.addedNodes.length === 0){
+                wait(8000);
+              }else{
+                observer.disconnect();
+                getDistance(mutation.addedNodes);
+              }
+              function wait(ms) {
+                return new Promise(resolve => setTimeout(()=>{
+                  
+                }, ms));
+              }
+        })
+      });
+    observer.observe(tBody, {childList: true})
   }
+
+  // DESCOBRE E FILTRA AS DISTANCIAS EXPORTANDO OS POSTOS NO FILTRO
+  const getDistance = async (array)=>{
+    let postosDeSaida = [];
+    let postosDeMeioCaminho = [];
+    let postosDeChegada = [];
+      const arrayTr = Array.from(array).map(tr => {
+        const lastTd = tr.querySelector("td:last-child");
+        const split_lastTd = lastTd.innerHTML.split("<br>");
+        const distance = parseFloat(split_lastTd[0].replace(/\D/g, ',').replace(/,+/g, ',').replace(/^,|,$/g, '').replace(/,/g, '.'));
+        if(distance - 0 < 50){
+          postosDeSaida.push(tr);
+        }else if(distance - 0 > 300 && distance - 0 < 1000){
+          postosDeMeioCaminho.push(tr);
+        }else if(distance - 0 > 1000 && distance - 0 < 2000){
+          postosDeChegada.push(tr);
+        }
+      })  
+    getPrices(postosDeSaida, postosDeMeioCaminho, postosDeChegada);
+    }
+
+    // DESCOBRE OS POSTOS MAIS BARATOS
+    const getPrices = (postosDeSaida, postosDeMeioCaminho, postosDeChegada) => {
+      let values = [];
+      let combValue = 620;
+      postosDeSaida.map(posto => {
+        const combustivel = parseFloat(posto.querySelector(".combustivel").innerText.replace(/\D/g, '').slice(2));
+        if(combustivel < combValue && combustivel > 530){
+          combValue = combustivel;
+          values.push(posto.innerHTML);
+        }
+      })
+      combValue = 620;
+      postosDeMeioCaminho.map(posto => {
+        const combustivel = parseFloat(posto.querySelector(".combustivel").innerText.replace(/\D/g, '').slice(2));
+        if(combustivel < combValue && combustivel > 530){
+          combValue = combustivel;
+          values.push(posto.innerHTML);
+        }
+      })
+      combValue = 620;
+      postosDeChegada.map(posto => {
+        const combustivel = parseFloat(posto.querySelector(".combustivel").innerText.replace(/\D/g, '').slice(2));
+        if(combustivel < combValue && combustivel > 530){
+          combValue = combustivel;
+          values.push(posto.innerHTML);
+        }
+      })
+      chrome.runtime.sendMessage({ values });
+    }
+
+    getTr();
+  // const lists_from_options = Array.from(options).map(li => {
+  //   console.log(li);
+  // })
 }
