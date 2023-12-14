@@ -6,7 +6,7 @@
 
 Na empresa que trabalho atualmente existe um processo de pesquisa de preço para clientes, onde era feito através de uma planilha que contém os preços dos combustíveis em diversos postos credenciados da rede.
 
-
+https://github.com/valdircaf/Buscador-de-Precos/assets/70548483/850ee6f6-e77c-4eb8-a92a-4772cad09ec0
 
 Percebi que o processo era muito manual, e levava muito tempo para fazer, então propus a ideia de desenvolver uma extensão para automatizar esse processo e diminuir a quantidade de tempo gasto. Foi quando veio a ideia deste buscador, onde foi desenvolvido com intuito de automatizar o processo de filtragem de preços em postos de uma determinada rota traçada pelo usuário no sistema Rede Frota.
 
